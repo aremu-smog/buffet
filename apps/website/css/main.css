@@ -1,6 +1,19 @@
 :root {
   --color-black: #1f1f1f;
   --color-white: #d9d9d9;
+
+  --font-primary: Helvetica, sans-serif;
+}
+
+@font-face {
+  font-family: Helvetica;
+  src: url(../assets/fonts/HelveticaNeue-Thin.otf);
+  font-weight: 100;
+}
+@font-face {
+  font-family: Helvetica;
+  src: url(../assets/fonts/HelveticaNeue-Roman.otf);
+  font-weight: 400;
 }
 
 * {
@@ -10,9 +23,9 @@
 body {
   background-color: var(--color-black);
   color: var(--color-white);
-  font-family: sans-serif;
   font-size: 20px;
   line-height: 30px;
+  font-family: var(--font-primary);
 }
 
 #main-header {
@@ -25,7 +38,27 @@ h1#date {
   font-weight: 200;
   text-transform: uppercase;
   margin-left: 30px;
+  font-weight: 100;
 }
+
+#banner {
+  background-color: var(--color-white);
+  color: var(--color-black);
+  padding: 32px 0;
+  height: auto;
+  margin-top: 44px;
+  margin-bottom: 32px;
+  overflow-x: hidden;
+}
+#banner > h2 {
+  font-size: 86px;
+  line-height: -4px;
+  margin: 0px;
+  margin: 0 24px;
+  text-align: center;
+  font-weight: 100;
+}
+
 .container {
   max-width: 700px;
   margin: auto;
@@ -51,6 +84,9 @@ select {
 input[type="checkbox"] {
   width: auto;
 }
+select {
+  cursor: pointer;
+}
 label.checkbox {
   cursor: pointer;
 }
@@ -65,6 +101,13 @@ button {
   font-size: 18px;
   line-height: 0px;
   cursor: pointer;
+}
+
+[data-visible="true"] {
+  display: block;
+}
+[data-visible="false"] {
+  display: none;
 }
 
 footer {
