@@ -31,12 +31,12 @@
         <p>Thank you for your cooperation.</p>
         <form id="consent-form">
           <div class="form-group row">
-            <input type="checkbox" id="agreement" />
+            <input type="checkbox" id="agreement" required />
             <label class="checkbox" for="agreement"
               >I agree to all the terms stated above.</label
             >
           </div>
-          <button disabled="disabled">Proceed</button>
+          <button>Proceed</button>
         </form>
       </section>
 
@@ -50,13 +50,13 @@
           </div>
           <div class="form-group">
             <label for="account-number">Your Account Number</label>
-            <input type="text" id="account-number" />
+            <input type="text" id="account-number" maxlength="10" />
           </div>
           <div class="form-group row">
             <input type="checkbox" id="account-name" />
             <label class="checkbox" for="account-name"
               >My name is
-              <span id="user-account-name">Aremu Oluwabgbamila</span></label
+              <span id="user-account-name">Aremu Oluwagbamila</span></label
             >
           </div>
           <button>Proceed</button>
@@ -67,4 +67,5 @@
       <p>Built with love in Ibadan</p>
     </footer>
   </body>
+  <script src="./js/index.js"></script>
 </html>
