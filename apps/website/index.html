@@ -44,16 +44,22 @@
         <form id="bank-info-form">
           <div class="form-group">
             <label for="bank-list">Your Bank</label>
-            <select id="bank-list">
+            <select id="bank-list" required>
               <option value="">Kindly select your bank</option>
             </select>
           </div>
           <div class="form-group">
             <label for="account-number">Your Account Number</label>
-            <input type="text" id="account-number" maxlength="10" />
+            <input
+              type="text"
+              required
+              id="account-number"
+              maxlength="10"
+              disabled="disabled"
+            />
           </div>
           <div class="form-group row">
-            <input type="checkbox" id="account-name" />
+            <input type="checkbox" required id="account-name" />
             <label class="checkbox" for="account-name"
               >My name is
               <span id="user-account-name">Aremu Oluwagbamila</span></label
@@ -67,5 +73,6 @@
       <p>Built with love in Ibadan</p>
     </footer>
   </body>
+  <script src="./js/api.js"></script>
   <script src="./js/index.js"></script>
 </html>
