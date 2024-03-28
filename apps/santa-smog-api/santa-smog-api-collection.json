@@ -1,0 +1,77 @@
+{
+    "client": "Thunder Client",
+    "collectionName": "Santa Smog",
+    "dateExported": "2024-03-28T10:12:09.627Z",
+    "version": "1.1",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "80c93242-bf9f-43b1-869c-fa91f7164b02",
+            "colId": "45ad4386-2d4d-4eb2-b85d-4169b2509034",
+            "containerId": "",
+            "name": "Pay",
+            "url": "http://127.0.0.1:3000/pay",
+            "method": "POST",
+            "sortNum": 10000,
+            "created": "2024-03-27T20:35:52.090Z",
+            "modified": "2024-03-27T20:35:52.090Z",
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"name\": \"Aremu Oluwagbamila\",\n  \"bank_code\": \"999992\",\n  \"account_number\": \"9010761375\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "1b04edbc-1dde-45d9-81a2-fe3d5f7caebd",
+            "colId": "45ad4386-2d4d-4eb2-b85d-4169b2509034",
+            "containerId": "",
+            "name": "List Banks",
+            "url": "http://127.0.0.1:3000/list_banks",
+            "method": "GET",
+            "sortNum": 20000,
+            "created": "2024-03-27T20:36:27.484Z",
+            "modified": "2024-03-27T20:37:01.193Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "9693d257-25fb-47e3-852f-f4a5a38f6af4",
+            "colId": "45ad4386-2d4d-4eb2-b85d-4169b2509034",
+            "containerId": "",
+            "name": "Validate Account Number",
+            "url": "http://127.0.0.1:3000/validate_account_number?account_number=9010761375&bank_code=999992",
+            "method": "GET",
+            "sortNum": 30000,
+            "created": "2024-03-27T20:55:08.628Z",
+            "modified": "2024-03-27T21:12:07.382Z",
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ],
+            "params": [
+                {
+                    "name": "account_number",
+                    "value": "9010761375",
+                    "isPath": false
+                },
+                {
+                    "name": "bank_code",
+                    "value": "999992",
+                    "isPath": false
+                }
+            ],
+            "tests": []
+        }
+    ]
+}
