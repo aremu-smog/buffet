@@ -1,0 +1,9 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  paystack_id: MyString
+  donation_id: MyString
+
+two:
+  paystack_id: MyString
+  donation_id: MyString

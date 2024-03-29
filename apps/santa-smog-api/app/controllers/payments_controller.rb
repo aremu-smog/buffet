@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Payments Object
-class PaymentsController < ApplicationController
+class PaymentsController < ApplicationController # rubocop:disable Metrics/ClassLength
   def list_all_banks
     banks_query = PaystackBanks.new(paystack_object)
     result = banks_query.list
@@ -16,9 +16,16 @@ class PaymentsController < ApplicationController
     validate_process_transaction_params(keys: params.keys)
     transaction_recipient_code = recipient_code(params: params)
 
+    recipient = fetch_recipient_from_db(code: transaction_recipient_code, full_name: params[:name])
+
+    puts recipient
+
+    recipient_paid_for_the_month?(recipient)
+
     transfer = make_transfer_to(recipient_code: transaction_recipient_code, name: params[:name])
 
-    render json: { status: 200, data: transfer }
+    message = handle_transfer(transfer: transfer, recipient: recipient)
+    render json: { status: 200, data: { message: message } }
   rescue StandardError => e
     handle_error e
   end
@@ -54,7 +61,14 @@ class PaymentsController < ApplicationController
     result['data']['recipient_code']
   end
 
-  def make_transfer_to(recipient_code:, name:)
+  # TODO: Move this to a background job
+  def make_transfer_to(recipient_code:, name:) # rubocop:disable Metrics/MethodLength
+    current_donation = Donation.last
+    no_of_recipients_db = current_donation.recipients.count
+    limit_reached = no_of_recipients_db <= current_donation.no_of_recipients
+
+    raise StandardError, '501 Limit reached for this month' unless limit_reached
+
     transfer = PaystackTransfers.new(paystack_object)
     amount_per_recipient = ENV.fetch('AMOUNT_PER_RECIPIENT', 500_000)
 
@@ -97,5 +111,30 @@ class PaymentsController < ApplicationController
     response_body = JSON.parse(response.read_body)
 
     response_body['data']['account_name']
+  end
+
+  def fetch_recipient_from_db(code:, full_name:)
+    recipient = Recipient.find_by(paystack_id: code)
+    recipient ||= Recipient.create!({ paystack_id: code, full_name: full_name })
+    recipient
+  end
+
+  def recipient_paid_for_the_month?(recipient)
+    current_donation = Donation.last
+    recipient = current_donation.recipients.find_by(paystack_id: recipient.paystack_id)
+
+    raise StandardError, '409 Too many payment requests this month' unless recipient.nil?
+  end
+
+  def handle_transfer(transfer:, recipient:)
+    last_donation = Donation.last
+
+    if transfer['status']
+      transaction_history = TransactionHistory.create({ recipient_id: recipient.id, donation_id: last_donation.id })
+      return 'Transfer Successful' if transaction_history.save
+
+    end
+
+    raise StandardError, 'Unable to make transfer'
   end
 end
