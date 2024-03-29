@@ -6,6 +6,7 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
     banks_query = PaystackBanks.new(paystack_object)
     result = banks_query.list
     banks_list = result['data']
+
     ng_banks = banks_list.filter { |bank| bank['currency'].downcase == 'ngn' }
     render json: { status: 200, data: ng_banks }
   rescue StandardError => e
