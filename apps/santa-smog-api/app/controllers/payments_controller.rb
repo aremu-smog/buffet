@@ -63,7 +63,6 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
 
   # TODO: Move this to a background job
   def make_transfer_to(recipient_code:, name:) # rubocop:disable Metrics/MethodLength
-    current_donation = Donation.last
     no_of_recipients_db = current_donation.recipients.count
     limit_reached = no_of_recipients_db <= current_donation.no_of_recipients
 
@@ -120,21 +119,22 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
   end
 
   def recipient_paid_for_the_month?(recipient)
-    current_donation = Donation.last
     recipient = current_donation.recipients.find_by(paystack_id: recipient.paystack_id)
 
     raise StandardError, '409 Too many payment requests this month' unless recipient.nil?
   end
 
   def handle_transfer(transfer:, recipient:)
-    last_donation = Donation.last
-
     if transfer['status']
-      transaction_history = TransactionHistory.create({ recipient_id: recipient.id, donation_id: last_donation.id })
+      transaction_history = TransactionHistory.create({ recipient_id: recipient.id, donation_id: current_donation.id })
       return 'Transfer Successful' if transaction_history.save
 
     end
 
     raise StandardError, 'Unable to make transfer'
+  end
+
+  def current_donation
+    Donation.where(active: true).last
   end
 end
