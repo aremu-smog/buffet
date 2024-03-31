@@ -41,6 +41,17 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
     handle_error e
   end
 
+  def current_donation_info
+    no_of_recipients = current_donation.no_of_recipients
+    no_of_current_recipients = current_donation.recipients.count
+    remaining_slots = no_of_recipients - no_of_current_recipients
+    render json: { status: 200, data: {
+      remaining_slots: remaining_slots,
+      amount_per_recipient: current_donation,
+      has_slots: !remaining_slots.zero?
+    } }
+  end
+
   private
 
   def paystack_object

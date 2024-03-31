@@ -10,7 +10,8 @@ Rails.application.routes.draw do
   get '/list_banks', to: 'payments#list_all_banks'
   get '/validate_account_number', to: 'payments#validate_account_number'
   post '/pay', to: 'payments#process_transaction'
+  get '/donation_info', to: 'payments#current_donation_info'
 
-  # Make this a dynamic route in case of more webhooks
+  # Make this a dynamic route in case of more webhooks?
   post '/webhook/paystack', to: 'webhooks#paystack'
 end
