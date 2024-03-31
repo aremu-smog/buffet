@@ -1,4 +1,3 @@
-const consentForm = document.querySelector("#consent-form");
 const bankInfoForm = document.querySelector("#bank-info-form");
 
 const paymentSection = document.querySelector("#payment");
@@ -6,23 +5,63 @@ const introSection = document.querySelector("#intro");
 
 const bankListInput = document.querySelector("#bank-list");
 const accountNumberInput = document.querySelector("#account-number");
+const proceedToPayButton = document.querySelector("#proceed-to-pay");
 
-const userAccountNameSpan = document.querySelector("#user-account-name");
+const accountNumberInputMessage = accountNumberInput.nextElementSibling;
+
+const lottieConfetti = document.querySelector("dotlottie-player#confetti");
+
+const remainingSlotSpan = document.querySelector("#remaining-slots");
+const noMoreSlotBanner = document.querySelector("#banner");
+
+let userAccountName;
+
+const clearAccountNumberInput = () => {
+  accountNumberInput.value = "";
+  accountNumberInputMessage.innerHTML = "";
+};
 
 window.addEventListener("load", async () => {
-  const bank_list = await api.get("/list_banks");
-  await setBankOptions(bank_list);
+  loadMonthAndYear();
+  const { remaining_slots = "", has_slots } = await api.get("/donation_info");
+  remainingSlotSpan.innerHTML =
+    remaining_slots < 10 ? `0${remaining_slots}` : remaining_slots;
+  if (!has_slots) {
+    await disableAllFields();
+    remainingSlotSpan.innerHTML = 10;
+    noMoreSlotBanner.style.display = "block";
+  }
 });
 
+const disableAllFields = async () => {
+  const allFormFields = bankInfoForm.querySelectorAll("input, select");
+
+  allFormFields.forEach((formField) => {
+    formField.setAttribute("disabled", "disabled");
+  });
+};
+
+const loadMonthAndYear = () => {
+  const monthAndYearParagraph = document.querySelector("#month-and-year");
+  const today = new Date();
+  const monthAndYear = today.toLocaleString("en", {
+    month: "long",
+    year: "numeric",
+  });
+
+  monthAndYearParagraph.innerText = monthAndYear;
+};
 bankListInput.addEventListener("change", (e) => {
   const selectedBank = e.target.value;
-
-  console.log({ selectedBank });
 
   if (!selectedBank) {
     accountNumberInput.setAttribute("disabled", "disabled");
   } else {
+    if (!!accountNumberInput.value) {
+      clearAccountNumberInput();
+    }
     accountNumberInput.removeAttribute("disabled");
+    accountNumberInput.setAttribute("placeholder", "9010761375");
     accountNumberInput.focus();
   }
 });
@@ -34,26 +73,10 @@ accountNumberInput.addEventListener("keyup", async (e) => {
   const lengthOfAccountNumber = accountNumber.length;
 
   if (lengthOfAccountNumber === ACCOUNT_NUMBER_LENGTH) {
+    accountNumberInputMessage.innerHTML = `<span id="hourglass">⏳</span> Fetching Account Details`;
     await verifyAccountDetails(accountNumber, bankListInput.value);
   }
 });
-
-const setBankOptions = async (bank_list) => {
-  const noBankList = isObjectEmpty(bank_list);
-
-  if (noBankList) {
-    alert("Unable to fetch bank list, please refresh and trya gain");
-    return;
-  }
-
-  bank_list.forEach((bank) => {
-    const bankOption = document.createElement("option");
-    bankOption.innerText = bank.name;
-    bankOption.setAttribute("value", bank.code);
-
-    bankListInput.appendChild(bankOption);
-  });
-};
 
 const verifyAccountDetails = async (account_number, bank_code) => {
   if (!account_number || !bank_code) {
@@ -69,38 +92,45 @@ const verifyAccountDetails = async (account_number, bank_code) => {
   });
 
   if (!account_name) {
-    alert("No account detais, kindly check your account number and bank");
+    accountNumberInputMessage.innerHTML = `<span>❌</span> Account not found. Kindly check account number`;
     return;
   }
-  userAccountNameSpan.innerText = account_name;
+  userAccountName = account_name;
+  accountNumberInputMessage.innerHTML = `<span>✅</span> Account Name: ${account_name}`;
+  proceedToPayButton.removeAttribute("disabled");
 };
 
 const isObjectEmpty = (object = {}) => {
   Object.keys(object).length == 0;
 };
-consentForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-  e.target.reset();
-  hideElement(introSection);
-  showElement(paymentSection);
-});
 
 bankInfoForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
+  proceedToPayButton.innerHTML = `<span id="hourglass">⏳</span> Processing`;
+  proceedToPayButton.setAttribute("disabled", "disabled");
   const { status } = await api.post("/pay", {
     account_number: accountNumberInput.value,
     bank_code: bankListInput.value,
-    name: userAccountNameSpan.innerText,
+    name: userAccountName,
   });
 
   if (status === 200) {
-    alert("Transfer successful, kindly check your account");
+    lottieConfetti.style.opacity = 1;
     e.target.reset();
-    hideElement(paymentSection);
-    showElement(introSection);
+    accountNumberInputMessage.innerHTML = "";
+    proceedToPayButton.innerHTML = `<span>🥳</span> Payment Successful`;
+    setTimeout(() => {
+      lottieConfetti.style.opacity = 0;
+      proceedToPayButton.innerHTML = `Proceed`;
+      proceedToPayButton.removeAttribute("disabled");
+    }, 5_000);
   } else {
-    alert("Something went wrong, please try again");
+    proceedToPayButton.innerHTML = `<span>😔</span> Payment Failed. Try again`;
+    setTimeout(() => {
+      proceedToPayButton.innerHTML = `Proceed`;
+      proceedToPayButton.removeAttribute("disabled");
+    }, 3_000);
   }
 });
 
