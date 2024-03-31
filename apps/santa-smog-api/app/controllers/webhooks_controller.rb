@@ -2,6 +2,7 @@ class WebhooksController < ApplicationController
   def paystack
     paystack_secret_key = ENV.fetch('PAYSTACK_SECRET_KEY')
     request_body = params[:webhook]
+    puts "[paystack-webhook] #{request_body}"
     hash = OpenSSL::HMAC.hexdigest('SHA512', paystack_secret_key, request_body.to_json)
     return unless hash == request.headers['x-paystack-signature']
 
