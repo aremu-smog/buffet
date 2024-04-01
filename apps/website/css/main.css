@@ -105,7 +105,7 @@ dotlottie-player#confetti {
   line-height: 0;
   padding: 8px 0;
   font-weight: 100;
-  display: none;
+  display: block;
 }
 
 .container > aside {
@@ -235,4 +235,65 @@ footer {
   text-align: center;
   color: var(--color-white);
   padding: 50px 0;
+}
+
+@media screen and (max-width: 700px) {
+  .container {
+    flex-direction: column-reverse;
+  }
+  main.container {
+    margin-top: 60px;
+  }
+  .container > section {
+    padding: 16px;
+    margin-bottom: 48px;
+  }
+  .container > aside {
+    width: 100%;
+    border-radius: 8px 8px 0px 0px;
+  }
+
+  .main-header {
+    margin-bottom: 40px;
+  }
+
+  .main-header > h1 {
+    font-size: 38px;
+  }
+  .main-header > p {
+    font-size: 16px;
+    margin-top: 36px;
+  }
+  .container > aside {
+    padding: 24px 0px;
+  }
+  .container > aside > h2 {
+    transform: rotate(0deg);
+    margin: 0px;
+    font-size: 48px;
+  }
+  .form-group {
+    margin-bottom: 16px;
+  }
+  .form-group label {
+    margin-bottom: 2px;
+    font-size: 14px;
+  }
+  input,
+  select {
+    font-size: 14px;
+  }
+  #food-pot {
+    font-size: 100px;
+    right: 40px;
+  }
+
+  footer {
+    font-size: 14px;
+    padding: 36px 0;
+  }
+
+  #bank-info-form button {
+    margin-top: 24px;
+  }
 }
