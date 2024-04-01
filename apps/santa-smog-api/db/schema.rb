@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_03_29_171728) do
+ActiveRecord::Schema[7.1].define(version: 2024_04_01_093055) do
   create_table "donations", force: :cascade do |t|
     t.integer "amount"
     t.integer "no_of_recipients"
@@ -25,6 +25,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_29_171728) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "full_name"
+    t.string "email"
+    t.index ["email"], name: "unique_email", unique: true
+    t.index ["full_name"], name: "unique_full_name", unique: true
+    t.index ["paystack_id"], name: "unique_paystack_id", unique: true
   end
 
   create_table "transaction_histories", force: :cascade do |t|

@@ -13,18 +13,19 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
     handle_error e
   end
 
-  def process_transaction
+  def process_transaction # rubocop:disable Metrics/AbcSize,Metrics/MethodLength
     validate_process_transaction_params(keys: params.keys)
-    transaction_recipient_code = recipient_code(params: params)
+    account_name = get_account_name(account_number: params[:account_number], bank_code: params[:bank_code])
+    can_fullname_be_trusted?(account_name)
 
-    recipient = fetch_recipient_from_db(code: transaction_recipient_code, full_name: params[:name])
+    transaction_recipient_code = recipient_code(params: params, name: account_name)
 
-    puts recipient
+    recipient = fetch_recipient_from_db(code: transaction_recipient_code, full_name: account_name,
+                                        email: params[:email])
 
     recipient_paid_for_the_month?(recipient)
 
-    transfer = make_transfer_to(recipient_code: transaction_recipient_code, name: params[:name])
-
+    transfer = make_transfer_to(recipient_code: transaction_recipient_code, name: account_name)
     message = handle_transfer(transfer: transfer, recipient: recipient)
     render json: { status: 200, data: { message: message } }
   rescue StandardError => e
@@ -34,7 +35,7 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
   def validate_account_number
     validate_params(expected_keys: %w[account_number bank_code], keys: params.keys)
 
-    account_name = get_account_info(account_number: params[:account_number], bank_code: params[:bank_code])
+    account_name = get_account_name(account_number: params[:account_number], bank_code: params[:bank_code])
 
     render json: { status: 200, data: { account_name: account_name } }
   rescue StandardError => e
@@ -60,12 +61,12 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
     Paystack.new(paystack_public_key, paystack_secret_key)
   end
 
-  def recipient_code(params:)
+  def recipient_code(params:, name:)
     recipient = PaystackRecipients.new(paystack_object)
     result = recipient.create(
       type: 'nuban',
-      name: params[:name],
-      description: '5K for Aremu',
+      name: name,
+      description: "#{current_donation.amount} for #{params[:name]}",
       account_number: params[:account_number],
       bank_code: params[:bank_code],
       currency: 'NGN'
@@ -78,14 +79,15 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
     no_of_recipients_db = current_donation.recipients.count
     limit_reached = no_of_recipients_db <= current_donation.no_of_recipients
 
+    puts "[limit-reached] #{limit_reached}"
     raise StandardError, '501 Limit reached for this month' unless limit_reached
 
     transfer = PaystackTransfers.new(paystack_object)
-    amount_per_recipient = ENV.fetch('AMOUNT_PER_RECIPIENT', 500_000)
+    amount_per_recipient = current_donation.amount
 
     transfer.initializeTransfer(
       source: 'balance',
-      reason: "5K for #{name}",
+      reason: "Buffet for #{name}",
       amount: amount_per_recipient,
       recipient: recipient_code
     )
@@ -103,12 +105,12 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
   end
 
   def validate_process_transaction_params(keys:)
-    expected_keys = %w[name bank_code account_number]
+    expected_keys = %w[email bank_code account_number]
     has_all_keys = expected_keys.all? { |key| keys.include?(key) }
     raise ArgumentError, "400 Bad Request. Expects: #{expected_keys.join(', ')} in body" unless has_all_keys
   end
 
-  def get_account_info(account_number:, bank_code:)
+  def get_account_name(account_number:, bank_code:)
     paystack_url = URI("https://api.paystack.co/bank/resolve?account_number=#{account_number}&bank_code=#{bank_code}")
 
     http = Net::HTTP.new(paystack_url.host, paystack_url.port)
@@ -124,16 +126,16 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
     response_body['data']['account_name']
   end
 
-  def fetch_recipient_from_db(code:, full_name:)
+  def fetch_recipient_from_db(code:, full_name:, email:)
     recipient = Recipient.find_by(paystack_id: code)
-    recipient ||= Recipient.create!({ paystack_id: code, full_name: full_name })
+    recipient ||= Recipient.create!({ paystack_id: code, full_name: full_name.upcase, email: email }) if recipient.nil?
     recipient
   end
 
   def recipient_paid_for_the_month?(recipient)
-    recipient = current_donation.recipients.find_by(paystack_id: recipient.paystack_id)
+    recipient = current_donation.recipients.where(paystack_id: recipient.paystack_id)
 
-    raise StandardError, '409 Too many payment requests this month' unless recipient.nil?
+    raise StandardError, '409 Too many payment requests this month' unless recipient.blank?
   end
 
   def handle_transfer(transfer:, recipient:)
@@ -144,6 +146,26 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
     end
 
     raise StandardError, 'Unable to make transfer'
+  end
+
+  def can_fullname_be_trusted?(full_name) # rubocop:disable Metrics/AbcSize,Metrics/MethodLength
+    names_array = full_name.split(' ').map(&:strip)
+    size_of_name = names_array.size.to_f
+    target = 0
+    names_array.each do |name|
+      puts "[integrity] #{name}"
+      recipient = current_donation.recipients.where('full_name LIKE ?', "%#{name.upcase}%")
+      puts recipient.blank?
+      next if recipient.blank?
+
+      target += 1
+      puts "[integrity-target] #{target}"
+    end
+
+    integrity = (target / size_of_name)
+
+    puts "[integrity-for-#{full_name.downcase.gsub(' ', '-')}] #{integrity} "
+    raise StandardError, '419' unless integrity < 0.75
   end
 
   def current_donation
