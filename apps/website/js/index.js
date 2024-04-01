@@ -6,6 +6,7 @@ const introSection = document.querySelector("#intro");
 const bankListInput = document.querySelector("#bank-list");
 const accountNumberInput = document.querySelector("#account-number");
 const proceedToPayButton = document.querySelector("#proceed-to-pay");
+const emailInput = document.querySelector("#email-address");
 
 const accountNumberInputMessage = accountNumberInput.nextElementSibling;
 
@@ -14,8 +15,6 @@ const lottieConfetti = document.querySelector("dotlottie-player#confetti");
 const remainingSlotSpan = document.querySelector("#remaining-slots");
 const noMoreSlotBanner = document.querySelector("#banner");
 
-let userAccountName;
-
 const clearAccountNumberInput = () => {
   accountNumberInput.value = "";
   accountNumberInputMessage.innerHTML = "";
@@ -23,6 +22,13 @@ const clearAccountNumberInput = () => {
 
 window.addEventListener("load", async () => {
   loadMonthAndYear();
+
+  const currentMonth = await getFromLocalStroage(STORAGE_KEYS.CURRENT_MONTH);
+
+  if (currentMonth === currentMonthAndYear()) {
+    await disableAllFields();
+    noMoreSlotBanner.style.display = "block";
+  }
   const { remaining_slots = "", has_slots } = await api.get("/donation_info");
   remainingSlotSpan.innerHTML =
     remaining_slots < 10 ? `0${remaining_slots}` : remaining_slots;
@@ -43,13 +49,17 @@ const disableAllFields = async () => {
 
 const loadMonthAndYear = () => {
   const monthAndYearParagraph = document.querySelector("#month-and-year");
+  monthAndYearParagraph.innerText = currentMonthAndYear();
+};
+
+const currentMonthAndYear = () => {
   const today = new Date();
   const monthAndYear = today.toLocaleString("en", {
     month: "long",
     year: "numeric",
   });
 
-  monthAndYearParagraph.innerText = monthAndYear;
+  return monthAndYear;
 };
 bankListInput.addEventListener("change", (e) => {
   const selectedBank = e.target.value;
@@ -95,9 +105,9 @@ const verifyAccountDetails = async (account_number, bank_code) => {
     accountNumberInputMessage.innerHTML = `<span>❌</span> Account not found. Kindly check account number`;
     return;
   }
-  userAccountName = account_name;
   accountNumberInputMessage.innerHTML = `<span>✅</span> Account Name: ${account_name}`;
   proceedToPayButton.removeAttribute("disabled");
+  emailInput.focus();
 };
 
 const isObjectEmpty = (object = {}) => {
@@ -111,19 +121,20 @@ bankInfoForm.addEventListener("submit", async (e) => {
   proceedToPayButton.setAttribute("disabled", "disabled");
   const { status } = await api.post("/pay", {
     account_number: accountNumberInput.value,
-    bank_code: bankListInput.value,
-    name: userAccountName,
+    bank_code: bankListInput.value.trim(),
+    email: emailInput.value.trim(),
   });
 
   if (status === 200) {
     lottieConfetti.style.opacity = 1;
     e.target.reset();
+    disableAllFields();
     accountNumberInputMessage.innerHTML = "";
     proceedToPayButton.innerHTML = `<span>🥳</span> Payment Successful`;
+    await addToLocalStorage(STORAGE_KEYS.CURRENT_MONTH, currentMonthAndYear());
     setTimeout(() => {
       lottieConfetti.style.opacity = 0;
       proceedToPayButton.innerHTML = `Proceed`;
-      proceedToPayButton.removeAttribute("disabled");
     }, 5_000);
   } else {
     proceedToPayButton.innerHTML = `<span>😔</span> Payment Failed. Try again`;
@@ -150,4 +161,26 @@ const showElement = (element) => {
   }
 
   element.setAttribute("data-visible", "true");
+};
+
+const STORAGE_KEYS = {
+  CURRENT_MONTH: "current-month",
+};
+
+const APPLICATION_NAME = "smog-buffet";
+
+const addToLocalStorage = async (storage_key, value) => {
+  await window.localStorage.setItem(
+    getStorageKey(storage_key),
+    JSON.stringify(value)
+  );
+};
+
+const getFromLocalStroage = async (storage_key) => {
+  const value = await window.localStorage.getItem(getStorageKey(storage_key));
+  return JSON.parse(value);
+};
+
+const getStorageKey = (storage_key) => {
+  return `${APPLICATION_NAME}-${storage_key}`;
 };
