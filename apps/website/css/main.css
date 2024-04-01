@@ -298,4 +298,8 @@ footer {
   #bank-info-form button {
     margin-top: 24px;
   }
+  #banner {
+    font-size: 16px;
+    padding: 4px 0px;
+  }
 }
