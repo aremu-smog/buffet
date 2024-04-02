@@ -165,7 +165,7 @@ dotlottie-player#confetti {
     transform: rotate(360deg);
   }
 }
-.form-group label {
+.form-group__label {
   margin-bottom: 4px;
   font-size: 16px;
   display: block;
@@ -174,12 +174,8 @@ dotlottie-player#confetti {
   display: flex;
   align-items: center;
 }
-.form-group.row label {
-  margin-bottom: 0px;
-}
 
-input,
-select {
+.form-group__input {
   height: 44px;
   outline: none;
   color: var(--color-black);
@@ -189,14 +185,14 @@ select {
   border: 1px solid var(--color-black);
 }
 
-input:disabled {
+.form-group__input:disabled {
   cursor: not-allowed;
 }
 
 input[type="checkbox"] {
   width: auto;
 }
-select {
+select.form-group__input {
   cursor: pointer;
 }
 label.checkbox {
@@ -276,12 +272,11 @@ footer {
   .form-group {
     margin-bottom: 16px;
   }
-  .form-group label {
+  .form-group__label {
     margin-bottom: 2px;
     font-size: 14px;
   }
-  input,
-  select {
+  .form-group__input {
     font-size: 14px;
   }
   #food-pot {

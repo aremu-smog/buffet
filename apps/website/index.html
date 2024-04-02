@@ -27,8 +27,8 @@
         </header>
         <form id="bank-info-form">
           <div class="form-group">
-            <label for="bank-list">Bank Name</label>
-            <select id="bank-list" required>
+            <label class="form-group__label" for="bank-list">Bank Name</label>
+            <select class="form-group__input" id="bank-list" required>
               <option value="">Kindly select your bank</option>
               <option value="999992">
                 OPay Digital Services Limited (OPay)
@@ -46,8 +46,11 @@
             </select>
           </div>
           <div class="form-group">
-            <label for="account-number">Account Number</label>
+            <label class="form-group__label" for="account-number"
+              >Account Number</label
+            >
             <input
+              class="form-group__input"
               type="text"
               required
               id="account-number"
@@ -59,8 +62,11 @@
             <p class="form-group__message"></p>
           </div>
           <div class="form-group">
-            <label for="account-number">Email Address</label>
+            <label class="form-group__label" for="account-number"
+              >Email Address</label
+            >
             <input
+              class="form-group__input"
               type="email"
               required
               id="email-address"
@@ -88,6 +94,7 @@
       </p>
     </footer>
   </body>
+  <script src="./js/env.js"></script>
   <script src="./js/api.js"></script>
   <script src="./js/index.js"></script>
   <script
