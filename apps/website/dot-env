@@ -4,9 +4,12 @@ env_file="./js/env.js"
 env_source=".env"
 # cat $env_source
 > $env_file
+echo "=========== Loading Env =============="
+echo "========= Source file: $env_source ==========="
 echo "ENV = { " >> $env_file
 while read -r line; do
     echo "$line," >> $env_file
 done < $env_source
+echo "======= Envs Successfully loaded ======="
 
 echo " } " >> $env_file
