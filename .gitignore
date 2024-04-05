@@ -1,5 +1,9 @@
 # root
 banks.json
 
+# apps/website
+node_modules
+.env
+
 # apps/santa-smog-api
 local_env.yml

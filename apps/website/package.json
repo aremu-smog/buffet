@@ -1,0 +1,16 @@
+{
+	"name": "buffet",
+	"version": "1.0.0",
+	"description": "buffet is a Charity website for donating a portion of my income to strangers who may need it. Powered by Paystack API",
+	"main": "index.js",
+	"repository": "https://github.com/aremu-smog/santa-smog",
+	"author": "Aremu Oluwagbamila",
+	"license": "MIT",
+	"scripts": {
+		"dev": "parcel index.html",
+		"build": "parcel build index.html"
+	},
+	"devDependencies": {
+		"parcel-bundler": "^1.12.5"
+	}
+}
