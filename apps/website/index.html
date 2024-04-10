@@ -1,103 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<link rel="stylesheet" href="./css/main.css" />
-		<link rel="icon" type="image/x-icon" href="./assets/favicon.png" />
-		<title>Smog's Buffet</title>
-	</head>
-	<body>
-		<main class="container">
-			<img id="food-pot" src="./assets/food-plate.png" alt="Plate of food" />
-			<section data-visible="true" id="payment">
-				<dotlottie-player
-					id="confetti"
-					src="https://lottie.host/eb8f0bfa-19d6-4ff4-8df8-8b5105dedebe/HYkzZi9AGo.json"
-					background="transparent"
-					speed="1"
-					style="width: 100%; height: 100%"
-					loop
-					autoplay
-				></dotlottie-player>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./css/main.css" />
+    <link rel="icon" type="image/x-icon" href="./assets/favicon.png" />
+    <meta type="og:title" content="Smog's Buffet" />
+    <meta
+      type="og:description"
+      content="Serve yourself if 5,000 NGN is not too small for you."
+    />
+    <meta
+      type="og:image"
+      content="https://res.cloudinary.com/aremusmog/image/upload/v1712782713/smog%20buffet/Serve_yourself_q8q2nb.jpg"
+    />
+    <title>Smog's Buffet</title>
+  </head>
+  <body>
+    <main class="container">
+      <img id="food-pot" src="./assets/food-plate.png" alt="Plate of food" />
+      <section data-visible="true" id="payment">
+        <dotlottie-player
+          id="confetti"
+          src="https://lottie.host/eb8f0bfa-19d6-4ff4-8df8-8b5105dedebe/HYkzZi9AGo.json"
+          background="transparent"
+          speed="1"
+          style="width: 100%; height: 100%"
+          loop
+          autoplay
+        ></dotlottie-player>
 
-				<header class="main-header">
-					<h1>Serve yourself</h1>
-					<p id="month-and-year">May 2024</p>
-				</header>
-				<form id="bank-info-form">
-					<div class="form-group">
-						<label class="form-group__label" for="bank-list">Bank Name</label>
-						<select class="form-group__input" id="bank-list" required>
-							<option value="">Kindly select your bank</option>
-							<option value="999992">
-								OPay Digital Services Limited (OPay)
-							</option>
-							<option value="999991">PalmPay</option>
-							<option value="044">Access Bank</option>
-							<option value="50211">Kuda Bank</option>
-							<option value="058">Guaranty Trust Bank</option>
-							<option value="057">Zenith Bank</option>
-							<option value="033">United Bank For Africa</option>
-							<option value="032">Union Bank of Nigeria</option>
-							<option value="076">Polaris Bank</option>
-							<option value="101">Providus Bank</option>
-							<option value="232">Sterling Bank</option>
-						</select>
-					</div>
-					<div class="form-group">
-						<label class="form-group__label" for="account-number"
-							>Account Number</label
-						>
-						<input
-							class="form-group__input"
-							type="text"
-							required
-							id="account-number"
-							maxlength="10"
-							disabled="disabled"
-							placeholder="Please select your bank"
-							pattern="^\d{10}$"
-						/>
-						<p class="form-group__message"></p>
-					</div>
-					<div class="form-group">
-						<label class="form-group__label" for="account-number"
-							>Email Address</label
-						>
-						<input
-							class="form-group__input"
-							type="email"
-							required
-							id="email-address"
-							placeholder="e.g buffet@aremusmog.com"
-						/>
-					</div>
+        <header class="main-header">
+          <h1>Serve yourself</h1>
+          <p id="month-and-year">May 2024</p>
+        </header>
+        <form id="bank-info-form">
+          <div class="form-group">
+            <label class="form-group__label" for="bank-list">Bank Name</label>
+            <select class="form-group__input" id="bank-list" required>
+              <option value="">Kindly select your bank</option>
+              <option value="999992">
+                OPay Digital Services Limited (OPay)
+              </option>
+              <option value="999991">PalmPay</option>
+              <option value="044">Access Bank</option>
+              <option value="50211">Kuda Bank</option>
+              <option value="058">Guaranty Trust Bank</option>
+              <option value="057">Zenith Bank</option>
+              <option value="033">United Bank For Africa</option>
+              <option value="032">Union Bank of Nigeria</option>
+              <option value="076">Polaris Bank</option>
+              <option value="101">Providus Bank</option>
+              <option value="232">Sterling Bank</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-group__label" for="account-number"
+              >Account Number</label
+            >
+            <input
+              class="form-group__input"
+              type="text"
+              required
+              id="account-number"
+              maxlength="10"
+              disabled="disabled"
+              placeholder="Please select your bank"
+              pattern="^\d{10}$"
+            />
+            <p class="form-group__message"></p>
+          </div>
+          <div class="form-group">
+            <label class="form-group__label" for="account-number"
+              >Email Address</label
+            >
+            <input
+              class="form-group__input"
+              type="email"
+              required
+              id="email-address"
+              placeholder="e.g buffet@aremusmog.com"
+            />
+          </div>
 
-					<button id="proceed-to-pay" disabled>Proceed</button>
-				</form>
+          <button id="proceed-to-pay" disabled>Proceed</button>
+        </form>
 
-				<div id="banner"><p>All slots for this month taken</p></div>
-			</section>
-			<aside>
-				<h2>
-					<span><span id="remaining-slots">10</span> Slots</span><br />
-					<span>&nbsp;&nbsp;&nbsp;&nbsp;5,000NGN</span>
-				</h2>
-			</aside>
-		</main>
-		<footer class="main-footer">
-			<p>
-				Designed & Built by
-				<a href="https://twitter.com/aremu_smog" target="_blank">Aremu Smog</a>
-				in Ibadan
-			</p>
-		</footer>
-	</body>
-	<script src="./js/home/index.js"></script>
-	<script src="./js/index.js"></script>
-	<script
-		src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs"
-		type="module"
-	></script>
+        <div id="banner"><p>All slots for this month taken</p></div>
+      </section>
+      <aside>
+        <h2>
+          <span><span id="remaining-slots">10</span> Slots</span><br />
+          <span>&nbsp;&nbsp;&nbsp;&nbsp;5,000NGN</span>
+        </h2>
+      </aside>
+    </main>
+    <footer class="main-footer">
+      <p>
+        Designed & Built by
+        <a href="https://twitter.com/aremu_smog" target="_blank">Aremu Smog</a>
+        in Ibadan
+      </p>
+    </footer>
+  </body>
+  <script src="./js/home/index.js"></script>
+  <script src="./js/index.js"></script>
+  <script
+    src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs"
+    type="module"
+  ></script>
 </html>
