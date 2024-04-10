@@ -16,12 +16,13 @@ class WebhooksController < ApplicationController
 
     puts "[paystack-webhook], #{body.to_json}"
     event = body['event']
+    data = body['data']
     case event
     when 'transfer.success'
       puts 'Send an email to via a background job'
     when 'charge.success'
-      response = { status: 500 } unless topup_or_create_donation(payment_url: body['metadata']['referrer'],
-                                                                 amount: body['amount'])
+      response = { status: 500 } unless topup_or_create_donation(payment_url: data['metadata']['referrer'],
+                                                                 amount: data['amount'])
     else
       response = { status: 500 }
       puts 'Event not recognized'
