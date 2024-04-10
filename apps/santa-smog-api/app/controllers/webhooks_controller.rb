@@ -37,7 +37,7 @@ class WebhooksController < ApplicationController
 
     last_donation = Donation.last
     amount_per_recipient = ENV.fetch('AMOUNT_PER_RECIPIENT', 500_000)
-    no_of_recipients = (amount / amount_per_recipient).to_i
+    no_of_recipients = amount.to_i / amount_per_recipient.to_i
     if last_donation.active
       last_donation.update!({ no_of_recipients: no_of_recipients + last_donation.no_of_recipients })
     end
