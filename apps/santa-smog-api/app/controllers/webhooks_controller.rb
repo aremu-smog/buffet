@@ -20,7 +20,8 @@ class WebhooksController < ApplicationController
     when 'transfer.success'
       puts 'Send an email to via a background job'
     when 'charge.success'
-      response = { status: 500 } unless topup_or_create_donation(message: body['message'], amount: body['amount'])
+      response = { status: 500 } unless topup_or_create_donation(payment_url: body['metadata']['referrer'],
+                                                                 amount: body['amount'])
     else
       response = { status: 500 }
       puts 'Event not recognized'
@@ -29,17 +30,24 @@ class WebhooksController < ApplicationController
     response
   end
 
-  TRANSACTION_MESSAGE = 'santa smog'.freeze
-  def topup_or_create_donation(message:, amount:)
-    puts message
-    return false unless message.downcase.strip.eql? TRANSACTION_MESSAGE
+  PAYSTACK_PAYMENT_URL = ENV.fetch('PAYSTACK_PAYMENT_URL')
+  def topup_or_create_donation(payment_url:, amount:)
+    return false unless payment_url.eql? PAYSTACK_PAYMENT_URL
 
     last_donation = Donation.last
     amount_per_recipient = ENV.fetch('AMOUNT_PER_RECIPIENT', 500_000)
     no_of_recipients = (amount / amount_per_recipient).to_i
-    last_donation.update!({ no_of_recipients: no_of_recipients }) if last_donation.active
+    if last_donation.active
+      last_donation.update!({ no_of_recipients: no_of_recipients + last_donation.no_of_recipients })
+    end
 
-    new_donation = Donation.create({ amount: amount_per_recipient, no_of_recipients: no_of_recipients, active: true })
+    new_donation = Donation.create({ amount: amount_per_recipient, no_of_recipients:, active: true,
+                                     name: current_month })
     new_donation.save
+  end
+
+  def current_month
+    today = Time.now
+    today.strftime('%B')
   end
 end
