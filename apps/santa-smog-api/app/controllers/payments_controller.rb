@@ -48,7 +48,7 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
     remaining_slots = no_of_recipients - no_of_current_recipients
     render json: { status: 200, data: {
       remaining_slots:,
-      amount_per_recipient: amount,
+      amount_per_recipient: current_donation.amount,
       has_slots: !remaining_slots.zero?
     } }
   end
