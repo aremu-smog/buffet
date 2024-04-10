@@ -2,6 +2,8 @@
 banks.json
 
 # apps/website
+.cache
+dist
 node_modules
 .env
 
