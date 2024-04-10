@@ -38,13 +38,15 @@ class WebhooksController < ApplicationController
     last_donation = Donation.last
     amount_per_recipient = ENV.fetch('AMOUNT_PER_RECIPIENT', 500_000)
     no_of_recipients = amount.to_i / amount_per_recipient.to_i
-    if last_donation.active
-      last_donation.update!({ no_of_recipients: no_of_recipients + last_donation.no_of_recipients })
+
+    if last_donation.nil? || !last_donation.active
+
+      new_donation = Donation.create({ amount: amount_per_recipient, no_of_recipients:, active: true,
+                                       name: current_month })
+      new_donation.save
     end
 
-    new_donation = Donation.create({ amount: amount_per_recipient, no_of_recipients:, active: true,
-                                     name: current_month })
-    new_donation.save
+    last_donation.update!({ no_of_recipients: no_of_recipients + last_donation.no_of_recipients })
   end
 
   def current_month
