@@ -43,7 +43,7 @@ class WebhooksController < ApplicationController
 
       new_donation = Donation.create({ amount: amount_per_recipient, no_of_recipients:, active: true,
                                        name: current_month })
-      new_donation.save
+      return new_donation.save
     end
 
     last_donation.update!({ no_of_recipients: no_of_recipients + last_donation.no_of_recipients })
