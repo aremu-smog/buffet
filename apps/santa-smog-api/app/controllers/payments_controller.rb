@@ -18,7 +18,7 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
     account_name = get_account_name(account_number: params[:account_number], bank_code: params[:bank_code])
     can_fullname_be_trusted?(account_name)
 
-    transaction_recipient_code = recipient_code(params: params, name: account_name)
+    transaction_recipient_code = recipient_code(params:, name: account_name)
 
     recipient = fetch_recipient_from_db(code: transaction_recipient_code, full_name: account_name,
                                         email: params[:email])
@@ -26,8 +26,8 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
     recipient_paid_for_the_month?(recipient)
 
     transfer = make_transfer_to(recipient_code: transaction_recipient_code, name: account_name)
-    message = handle_transfer(transfer: transfer, recipient: recipient)
-    render json: { status: 200, data: { message: message } }
+    message = handle_transfer(transfer:, recipient:)
+    render json: { status: 200, data: { message: } }
   rescue StandardError => e
     handle_error e
   end
@@ -37,7 +37,7 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
 
     account_name = get_account_name(account_number: params[:account_number], bank_code: params[:bank_code])
 
-    render json: { status: 200, data: { account_name: account_name } }
+    render json: { status: 200, data: { account_name: } }
   rescue StandardError => e
     handle_error e
   end
@@ -47,8 +47,8 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
     no_of_current_recipients = current_donation.recipients.count
     remaining_slots = no_of_recipients - no_of_current_recipients
     render json: { status: 200, data: {
-      remaining_slots: remaining_slots,
-      amount_per_recipient: current_donation,
+      remaining_slots:,
+      amount_per_recipient: amount,
       has_slots: !remaining_slots.zero?
     } }
   end
@@ -65,7 +65,7 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
     recipient = PaystackRecipients.new(paystack_object)
     result = recipient.create(
       type: 'nuban',
-      name: name,
+      name:,
       description: "#{current_donation.amount} for #{params[:name]}",
       account_number: params[:account_number],
       bank_code: params[:bank_code],
@@ -128,7 +128,7 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
 
   def fetch_recipient_from_db(code:, full_name:, email:)
     recipient = Recipient.find_by(paystack_id: code)
-    recipient ||= Recipient.create!({ paystack_id: code, full_name: full_name.upcase, email: email }) if recipient.nil?
+    recipient ||= Recipient.create!({ paystack_id: code, full_name: full_name.upcase, email: }) if recipient.nil?
     recipient
   end
 
