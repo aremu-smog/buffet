@@ -83,7 +83,7 @@ export const loadNavigation = () => {
     return `<li class="main-navigation__list__item">
 		<a href="${page.url}" class="${
       isActivePage ? "main-navigation__list__item--active" : ""
-    }">${page.name}</a>
+    }" disabled="${isActivePage ? "disabled" : ""}">${page.name}</a>
 	</li>`;
   });
   const listItems = listItemsArray.join("");
@@ -98,6 +98,12 @@ export const loadNavigation = () => {
 
 export const hidePreloader = () => {
   const preloader = document.querySelector("#preloader");
+  const preloaderChildren = preloader.childNodes;
 
-  preloader.classList.add("preloader--hide");
+  setTimeout(() => {
+    preloaderChildren.forEach((child) => {
+      child.style.display = "none";
+    });
+    preloader.classList.add("preloader--hide");
+  }, 1_000);
 };

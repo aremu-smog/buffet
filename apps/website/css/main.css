@@ -1,5 +1,5 @@
 :root {
-  --color-black: #1f1f1f;
+  --color-black: #0a0a0a;
   --color-white: #ffffff;
   --color-deep-brown: #664d4d;
   --color-light-brown: #cca9a4;
@@ -231,6 +231,7 @@ label.checkbox {
   color: var(--color-black) !important;
 }
 .main-navigation__list__item--active {
+  cursor: not-allowed;
 }
 
 button {
@@ -277,14 +278,15 @@ footer {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--color-black);
+  background-color: var(--color-deep-brown);
   color: var(--color-white);
-  opacity: 1;
-  transition: opacity 1s ease-in-out;
+  transition: transform 1s ease-in-out;
+  transform: scaleX(1);
+  transform-origin: top center;
 }
 
 .preloader--hide {
-  opacity: 0;
+  transform: scaleY(0);
   pointer-events: none;
 }
 @media screen and (max-width: 700px) {
