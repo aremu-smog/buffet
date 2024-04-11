@@ -95,3 +95,9 @@ export const loadNavigation = () => {
 
   mainNavigation.innerHTML = navigationList;
 };
+
+export const hidePreloader = () => {
+  const preloader = document.querySelector("#preloader");
+
+  preloader.classList.add("preloader--hide");
+};

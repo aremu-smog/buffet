@@ -1,6 +1,7 @@
-import { loadMonthAndYear, loadNavigation } from "./utils";
+import { hidePreloader, loadMonthAndYear, loadNavigation } from "./utils";
 
 window.addEventListener("load", async () => {
   loadMonthAndYear();
   loadNavigation();
+  hidePreloader();
 });
