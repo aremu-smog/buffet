@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./css/main.css" />
+    <link rel="icon" type="image/x-icon" href="./assets/favicon.png" />
+    <meta type="og:title" content="Smog's Buffet" />
+    <meta
+      type="og:description"
+      content="Serve yourself if 5,000 NGN is not too small for you."
+    />
+    <meta
+      type="og:image"
+      content="https://res.cloudinary.com/aremusmog/image/upload/v1712782713/smog%20buffet/Serve_yourself_q8q2nb.jpg"
+    />
+    <title>Smog's Buffet</title>
+  </head>
+  <body>
+    <main class="container">
+      <img id="food-pot" src="./assets/food-plate.png" alt="Plate of food" />
+      <section data-visible="true" id="payment">
+        <dotlottie-player
+          id="confetti"
+          src="https://lottie.host/eb8f0bfa-19d6-4ff4-8df8-8b5105dedebe/HYkzZi9AGo.json"
+          background="transparent"
+          speed="1"
+          style="width: 100%; height: 100%"
+          loop
+          autoplay
+        ></dotlottie-player>
+
+        <header class="main-header">
+          <h1>Serve yourself</h1>
+          <p id="month-and-year"></p>
+        </header>
+        <section class="content-area">
+          <p>
+            Sometime last year, I started thinking of a way to send money to
+            people without asking for their account number because I am a ‘shy’
+            person and I didn’t want to come off as assuming people need(ed) the
+            measly 5,000NGN I was planning to give out so I thought. What if
+            there’s a place where people could go put their account details and
+            get money without my involvement?
+          </p>
+
+          <p>
+            That’s what sparked the idea but unfortunately, I didn’t have the
+            time to build the project until I started learning Ruby on Rails
+            this year and I thought this would be a great project to horn my
+            Ruby skills.
+          </p>
+
+          <p>
+            At the moment, I am the sole donor to this project, if you would
+            like to contribute/donate to this project. Please checkout the
+            Contribute page
+          </p>
+        </section>
+      </section>
+      <aside>
+        <h2>
+          <span>about<br />
+          <span>&nbsp;&nbsp;&nbsp;&nbsp;project</span>
+        </h2>
+      </aside>
+    </main>
+    <nav class="main-navigation container" id="main-navigation"></nav>
+    <footer class="main-footer container">
+      <p>
+        Designed & Built by
+        <a href="https://twitter.com/aremu_smog" target="_blank">Aremu Smog</a>
+        in Ibadan
+      </p>
+    </footer>
+  </body>
+  <script src="./js/index.js"></script>
+  <script
+    src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs"
+    type="module"
+  ></script>
+</html>

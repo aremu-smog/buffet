@@ -1,16 +1,16 @@
 import {
-	accountNumberInput,
-	accountNumberInputMessage,
-	bankInfoForm,
-} from "../ui"
+  accountNumberInput,
+  accountNumberInputMessage,
+  bankInfoForm,
+} from "./ui";
 
-import { disableAllFormFields } from "../utils"
+import { disableAllFormFields } from "../utils";
 
 export const clearAccountNumberInput = () => {
-	accountNumberInput.value = ""
-	accountNumberInputMessage.innerHTML = ""
-}
+  accountNumberInput.value = "";
+  accountNumberInputMessage.innerHTML = "";
+};
 
 export const disablePaymentFormFields = () => {
-	disableAllFormFields(bankInfoForm)
-}
+  disableAllFormFields(bankInfoForm);
+};

@@ -51,7 +51,6 @@ a:hover {
   max-width: 760px;
   margin: auto;
   border-radius: 8px;
-  background-color: var(--color-white);
   display: flex;
   position: relative;
   width: 100%;
@@ -59,6 +58,7 @@ a:hover {
 
 main.container {
   margin-top: 120px;
+  background-color: var(--color-white);
 }
 #food-pot {
   width: 180px;
@@ -199,6 +199,40 @@ label.checkbox {
   cursor: pointer;
 }
 
+.content-area {
+  font-size: 16px;
+  line-height: 28px;
+}
+
+.main-navigation {
+  margin-top: 1em;
+}
+.main-navigation__list {
+  list-style-type: none;
+  padding-inline-start: 0px;
+}
+.main-navigation__list__item {
+  display: inline-block;
+  margin-right: 8px;
+}
+.main-navigation__list__item a {
+  color: var(--color-white);
+  border: 1px solid var(--color-white);
+  padding: 0.75em 1.25em;
+  border-radius: 3em;
+  font-size: 16px;
+  text-decoration: none;
+  transition: all 0.5s ease-in-out;
+}
+
+.main-navigation__list__item a:hover,
+.main-navigation__list__item--active {
+  background-color: var(--color-white);
+  color: var(--color-black) !important;
+}
+.main-navigation__list__item--active {
+}
+
 button {
   border-radius: 8px;
   outline: none;
@@ -229,9 +263,8 @@ button:disabled {
 
 footer {
   font-size: 16px;
-  text-align: center;
   color: var(--color-white);
-  padding: 50px 0;
+  padding: 24px 0;
 }
 
 @media screen and (max-width: 700px) {
@@ -287,7 +320,7 @@ footer {
 
   footer {
     font-size: 14px;
-    padding: 36px 0;
+    padding: 24px 0;
   }
 
   #bank-info-form button {

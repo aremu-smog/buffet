@@ -1,13 +1,35 @@
-import { ACCOUNT_NUMBER_LENGTH } from "../constants";
+import { ACCOUNT_NUMBER_LENGTH, STORAGE_KEYS } from "../constants";
 import {
   accountNumberInput,
   accountNumberInputMessage,
   bankInfoForm,
   bankListInput,
+  noMoreSlotBanner,
   proceedToPayButton,
-} from "../ui";
+  remainingSlotSpan,
+} from "./ui";
 import { makePayment, verifyAccountDetails } from "./api";
-import { clearAccountNumberInput } from "./utils";
+import { clearAccountNumberInput, disablePaymentFormFields } from "./utils";
+import { currentMonthAndYear, getFromLocalStroage } from "../utils";
+import { api } from "../api";
+
+window.addEventListener("load", async () => {
+  const currentMonth = await getFromLocalStroage(STORAGE_KEYS.CURRENT_MONTH);
+
+  if (currentMonth === currentMonthAndYear()) {
+    await disablePaymentFormFields();
+    noMoreSlotBanner.style.display = "block";
+  }
+
+  const { remaining_slots = "", has_slots } = await api.get("/donation_info");
+  remainingSlotSpan.innerHTML =
+    remaining_slots < 10 ? `0${remaining_slots}` : remaining_slots;
+  if (!has_slots) {
+    await disablePaymentFormFields();
+    remainingSlotSpan.innerHTML = 10;
+    noMoreSlotBanner.style.display = "block";
+  }
+});
 
 bankListInput.addEventListener("change", (e) => {
   const selectedBank = e.target.value;

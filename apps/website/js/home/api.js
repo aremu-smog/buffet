@@ -8,7 +8,7 @@ import {
   lottieConfetti,
   noMoreSlotBanner,
   proceedToPayButton,
-} from "../ui";
+} from "./ui";
 import { addToLocalStorage, currentMonthAndYear } from "../utils";
 import { disablePaymentFormFields } from "./utils";
 
