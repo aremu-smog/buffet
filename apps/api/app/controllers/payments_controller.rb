@@ -84,7 +84,7 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
     no_of_recipients_db = current_donation.recipients.count
     is_limit_reached = no_of_recipients_db >= current_donation.no_of_recipients
 
-    puts "[limit-reached] #{limit_reached}"
+    puts "[limit-reached] #{is_limit_reached}"
     raise StandardError, '501 Limit reached for this month' if is_limit_reached
 
     transfer = PaystackTransfers.new(paystack_object)
