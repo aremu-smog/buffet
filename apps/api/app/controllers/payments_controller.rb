@@ -82,7 +82,7 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
   # TODO: Move this to a background job
   def make_transfer_to(recipient_code:, name:) # rubocop:disable Metrics/MethodLength
     no_of_recipients_db = current_donation.recipients.count
-    limit_reached = no_of_recipients_db <= current_donation.no_of_recipients
+    limit_reached = current_donation.no_of_recipients >= no_of_recipients_db
 
     puts "[limit-reached] #{limit_reached}"
     raise StandardError, '501 Limit reached for this month' unless limit_reached
