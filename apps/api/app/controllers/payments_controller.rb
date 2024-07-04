@@ -44,7 +44,10 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
 
   def current_donation_info
 
-    render json: {status: 200, data: {remaining_slots: 0, amount_per_recipient: ENV.fetch("AMOUNT_PER_RECIPIENT"), has_slots: false }} if(current_donation.nil?)
+    if current_donation.nil?
+      render json: {status: 200, data: {remaining_slots: 0, amount_per_recipient: ENV.fetch("AMOUNT_PER_RECIPIENT"), has_slots: false }}
+      return
+    end
     no_of_recipients = current_donation.no_of_recipients
     no_of_current_recipients = current_donation.recipients.count
     remaining_slots = no_of_recipients - no_of_current_recipients
