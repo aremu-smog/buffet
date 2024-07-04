@@ -43,6 +43,8 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
   end
 
   def current_donation_info
+
+    render json: {status: 200, data: {remaining_slots: 0, amount_per_recipient: ENV.fetch("AMOUNT_PER_RECIPIENT"), has_slots: false }} if(current_donation.nil?)
     no_of_recipients = current_donation.no_of_recipients
     no_of_current_recipients = current_donation.recipients.count
     remaining_slots = no_of_recipients - no_of_current_recipients
@@ -169,6 +171,7 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
   end
 
   def current_donation
-    Donation.where(active: true).last
+    last_active_donation = Donation.where(active: true).last
+    last_active_donation
   end
 end
