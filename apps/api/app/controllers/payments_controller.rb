@@ -82,13 +82,17 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
   # TODO: Move this to a background job
   def make_transfer_to(recipient_code:, name:) # rubocop:disable Metrics/MethodLength
     no_of_recipients_db = current_donation.recipients.count
-    limit_reached = current_donation.no_of_recipients >= no_of_recipients_db
+    is_limit_reached = no_of_recipients_db >= current_donation.no_of_recipients
 
     puts "[limit-reached] #{limit_reached}"
-    raise StandardError, '501 Limit reached for this month' unless limit_reached
+    raise StandardError, '501 Limit reached for this month' if is_limit_reached
 
     transfer = PaystackTransfers.new(paystack_object)
     amount_per_recipient = current_donation.amount
+
+    puts "no_of_recipients_db: #{no_of_recipients_db}"
+    puts "recipient_code: #{recipient_code}"
+    puts "amount_per_recipient: #{amount_per_recipient}"
 
     transfer.initializeTransfer(
       source: 'balance',
