@@ -97,9 +97,11 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
     transfer.initializeTransfer(
       source: 'balance',
       reason: "Buffet for #{name}",
-      amount: amount_per_recipient,
+      amount: amount_per_recipient.to_f,
       recipient: recipient_code
     )
+  rescue StandardError => e
+    puts "[make-transfer-erro] #{e}"
   end
 
   def validate_params(expected_keys:, keys:)
@@ -150,7 +152,7 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
   def handle_transfer(transfer:, recipient:)
     if transfer['status']
       transaction_history = TransactionHistory.create({ recipient_id: recipient.id, donation_id: current_donation.id })
-      return 'Transfer Successful' if transaction_history.save
+      return 'Transfer Successful' if transaction_history.save!
 
     end
 
