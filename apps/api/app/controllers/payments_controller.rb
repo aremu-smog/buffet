@@ -91,14 +91,14 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
     amount_per_recipient = current_donation.amount
 
     puts "no_of_recipients_db: #{no_of_recipients_db}"
-    puts "recipient_code: #{recipient_code}"
+    puts "recipient_code: #{recipient_code} #{name}"
     puts "amount_per_recipient: #{amount_per_recipient}"
 
     transfer.initializeTransfer(
       source: 'balance',
-      reason: "Buffet for #{name}",
+      reason: "Buffet from Aremu",
       amount: 5000,
-      recipient: recipient_code
+      recipient: 'RCP_ltladdd1ioga0ab'
     )
   rescue StandardError => e
     puts "[make-transfer-error] #{e}"
