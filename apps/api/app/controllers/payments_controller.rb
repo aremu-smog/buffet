@@ -97,7 +97,7 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
     transfer.initializeTransfer(
       source: 'balance',
       reason: "Buffet for #{name}",
-      amount: amount_per_recipient.to_f,
+      amount: 5000,
       recipient: recipient_code
     )
   rescue StandardError => e
