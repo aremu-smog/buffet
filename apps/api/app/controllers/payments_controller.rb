@@ -127,7 +127,7 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
     request['accept'] = 'application/json'
     request['Authorization'] = "Bearer #{ENV.fetch('PAYSTACK_SECRET_KEY')}"
 
-    request.body = {source: 'balance', amount: amount, recipient: recipient, reason: }
+    request.body = {source: 'balance', amount: amount, recipient: recipient, reason: reason}.to_json
 
     response = http.request(request)
     response_body = JSON.parse(response.read_body)
