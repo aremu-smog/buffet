@@ -150,7 +150,7 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
   end
 
   def handle_transfer(transfer:, recipient:)
-    if transfer['status']
+    unless transfer.nil?
       transaction_history = TransactionHistory.create({ recipient_id: recipient.id, donation_id: current_donation.id })
       return 'Transfer Successful' if transaction_history.save!
 
