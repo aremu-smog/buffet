@@ -87,14 +87,13 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
     puts "[limit-reached] #{is_limit_reached}"
     raise StandardError, '501 Limit reached for this month' if is_limit_reached
 
-    transfer = PaystackTransfers.new(paystack_object)
     amount_per_recipient = current_donation.amount
 
     puts "no_of_recipients_db: #{no_of_recipients_db}"
     puts "recipient_code: #{recipient_code} #{name}"
     puts "amount_per_recipient: #{amount_per_recipient}"
 
-  intitialize_transfer(recipient: 'RCP_ltladdd1ioga0ab', amount: 5000)
+    intitialize_transfer(recipient: 'RCP_ltladdd1ioga0ab', amount: 5000)
 
   rescue StandardError => e
     puts "[make-transfer-error] #{e}"
@@ -120,7 +119,7 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
   def intitialize_transfer(recipient:, amount:, reason: 'Buffet from Aremu')
     paystack_url = URI("https://api.paystack.co/transfer")
 
-    http = Net::HTTP.new(paystack_url.host, paystack_url.port)
+    http = Net::HTTP::Post.new(paystack_url.host, paystack_url.port)
     http.use_ssl = true
 
     request = Net::HTTP::Get.new(paystack_url)
@@ -132,6 +131,7 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
     response = http.request(request)
     response_body = JSON.parse(response.read_body)
 
+    puts "[initialize-transfer-response-body]: #{response_body}"
     response_body
   end
   def get_account_name(account_number:, bank_code:)
