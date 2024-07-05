@@ -119,7 +119,7 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
   def intitialize_transfer(recipient:, amount:, reason: 'Buffet from Aremu')
     paystack_url = URI("https://api.paystack.co/transfer")
 
-    http = Net::HTTP::Post.new(paystack_url.host, paystack_url.port)
+    http = Net::HTTP.new(paystack_url.host, paystack_url.port)
     http.use_ssl = true
 
     request = Net::HTTP::Post.new(paystack_url)
