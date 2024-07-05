@@ -97,11 +97,11 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
     transfer.initializeTransfer(
       source: 'balance',
       reason: "Buffet for #{name}",
-      amount: 50000,
+      amount: 5000,
       recipient: recipient_code
     )
   rescue StandardError => e
-    puts "[make-transfer-erro] #{e}"
+    puts "[make-transfer-error] #{e}"
   end
 
   def validate_params(expected_keys:, keys:)
