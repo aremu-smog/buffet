@@ -122,7 +122,7 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
     http = Net::HTTP::Post.new(paystack_url.host, paystack_url.port)
     http.use_ssl = true
 
-    request = Net::HTTP::Get.new(paystack_url)
+    request = Net::HTTP::Post.new(paystack_url)
     request['accept'] = 'application/json'
     request['Authorization'] = "Bearer #{ENV.fetch('PAYSTACK_SECRET_KEY')}"
 
