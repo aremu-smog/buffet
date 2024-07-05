@@ -94,12 +94,8 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
     puts "recipient_code: #{recipient_code} #{name}"
     puts "amount_per_recipient: #{amount_per_recipient}"
 
-    transfer.initializeTransfer(
-      source: 'balance',
-      reason: "Buffet from Aremu",
-      amount: 5000,
-      recipient: 'RCP_ltladdd1ioga0ab'
-    )
+  intitialize_transfer(recipient: 'RCP_ltladdd1ioga0ab', amount: 5000)
+
   rescue StandardError => e
     puts "[make-transfer-error] #{e}"
   end
@@ -121,6 +117,23 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
     raise ArgumentError, "400 Bad Request. Expects: #{expected_keys.join(', ')} in body" unless has_all_keys
   end
 
+  def intitialize_transfer(recipient:, amount:, reason: 'Buffet from Aremu')
+    paystack_url = URI("https://api.paystack.co/transfer")
+
+    http = Net::HTTP.new(paystack_url.host, paystack_url.port)
+    http.use_ssl = true
+
+    request = Net::HTTP::Get.new(paystack_url)
+    request['accept'] = 'application/json'
+    request['Authorization'] = "Bearer #{ENV.fetch('PAYSTACK_SECRET_KEY')}"
+
+    request.body = {source: 'balance', amount: amount, recipient: recipient, reason: }
+
+    response = http.request(request)
+    response_body = JSON.parse(response.read_body)
+
+    response_body
+  end
   def get_account_name(account_number:, bank_code:)
     paystack_url = URI("https://api.paystack.co/bank/resolve?account_number=#{account_number}&bank_code=#{bank_code}")
 
