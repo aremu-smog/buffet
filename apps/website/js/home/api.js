@@ -54,7 +54,10 @@ export const makePayment = async e => {
 			lottieConfetti.style.opacity = 0
 			proceedToPayButton.innerHTML = `Proceed`
 			noMoreSlotBanner.style.display = "block"
-		}, 5_000)
+			const noMoreSlotBannerParagraph = noMoreSlotBanner.querySelector("p")
+			noMoreSlotBannerParagraph.textContent =
+				"Payment will be processed within 24hrs "
+		}, 1_000)
 	} else {
 		proceedToPayButton.innerHTML = `<span>😔</span> Payment Failed. Try again`
 		setTimeout(() => {
