@@ -93,7 +93,7 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
     puts "recipient_code: #{recipient_code} #{name}"
     puts "amount_per_recipient: #{amount_per_recipient}"
 
-    intitialize_transfer(recipient: recipient_code, amount: amount_per_recipient)
+    intitialize_transfer(recipient: recipient_code, amount: amount_per_recipient.to_f)
 
   rescue StandardError => e
     puts "[make-transfer-error] #{e}"
