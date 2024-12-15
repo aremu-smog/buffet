@@ -18,22 +18,14 @@
 				<label class="form-group__label" for="bank-list">Bank Name</label>
 				<select
 					class="form-group__input"
-					v-model="bankName"
+					v-model="form.bankName"
 					id="bank-list"
 					required
 				>
 					<option value="">Kindly select your bank</option>
-					<option value="999992">OPay Digital Services Limited (OPay)</option>
-					<option value="999991">PalmPay</option>
-					<option value="044">Access Bank</option>
-					<option value="50211">Kuda Bank</option>
-					<option value="058">Guaranty Trust Bank</option>
-					<option value="057">Zenith Bank</option>
-					<option value="033">United Bank For Africa</option>
-					<option value="032">Union Bank of Nigeria</option>
-					<option value="076">Polaris Bank</option>
-					<option value="101">Providus Bank</option>
-					<option value="232">Sterling Bank</option>
+					<option v-for="bank in banks" :value="bank.value">
+						{{ bank.name }}
+					</option>
 				</select>
 			</div>
 			<div class="form-group">
@@ -41,16 +33,16 @@
 					>Account Number</label
 				>
 				<input
-					v-model="accountNumber"
+					v-model="form.accountNumber"
 					class="form-group__input"
 					type="text"
 					required
 					ref="account-number"
 					id="account-number"
 					maxlength="10"
-					:disabled="isAccountNumberFieldDisabled"
+					:disabled="isAccountFieldDisabled"
 					:placeholder="
-						isAccountNumberFieldDisabled
+						isAccountFieldDisabled
 							? 'Please select your bank'
 							: 'Kindly enter your account number'
 					"
@@ -64,7 +56,7 @@
 				>
 				<input
 					ref="email-input"
-					v-model="emailAddress"
+					v-model="form.emailAddress"
 					class="form-group__input"
 					type="email"
 					required
@@ -97,89 +89,77 @@
 
 <script setup lang="ts">
 import { Vue3Lottie } from "vue3-lottie"
+import { banks } from "~/data"
 
 import Sidebar from "~/components/Sidebar.vue"
 import { api } from "~/libs/api"
 
-const bankName = ref("")
-const accountNumber = ref("")
-const emailAddress = ref("")
-const accountNumberInput = useTemplateRef("account-number")
-const emailAddressInput = useTemplateRef("email-input")
-const payButton = useTemplateRef("pay-button")
+const form = reactive({
+	bankName: "",
+	accountNumber: "",
+	emailAddress: "",
+})
 
-const remainingSlots = ref(10)
+const { formattedRemainingSlots, hasGottenInformation, hasSlots } =
+	useDonationInfo()
 
 const accountInformationMessage = ref("")
 const buttonText = ref("Proceed")
 
-const isAccountNumberFieldDisabled = ref(true)
-const hasGottenInformation = ref(false)
-const hasSlots = ref(false)
 const isPaymentSuccessful = ref(false)
 const isMakingPayment = ref(false)
 
-const formattedRemainingSlots = computed(() => {
-	return remainingSlots.value < 10
-		? `0${remainingSlots.value}`
-		: remainingSlots.value
-})
-watch(bankName, (newValue, oldValue) => {
-	if (newValue) {
-		isAccountNumberFieldDisabled.value = false
-		setTimeout(() => {
-			accountNumberInput.value?.focus()
-		}, 100)
-	} else {
-		isAccountNumberFieldDisabled.value = true
+const accountNumberInput = useTemplateRef("account-number")
+const emailAddressInput = useTemplateRef("email-input")
+const payButton = useTemplateRef("pay-button")
+
+watch(
+	() => form.bankName,
+	bankName => {
+		if (bankName) {
+			setTimeout(() => {
+				accountNumberInput.value?.focus()
+			}, 100)
+		}
 	}
-})
+)
+watch(
+	() => form.accountNumber,
+	async accountNumber => {
+		if (accountNumber.length === 10) {
+			accountInformationMessage.value = `<span id="hourglass">⏳</span> Fetching Account Details`
+			const { account_name = "" } = await api.get("/validate_account_number", {
+				account_number: form.accountNumber,
+				bank_code: form.bankName,
+			})
+			if (!account_name) {
+				accountInformationMessage.value = `<span>❌</span> Account not found. Kindly check account number`
+				return
+			}
+			accountInformationMessage.value = `<span>✅</span> Account Name: ${account_name}`
+			payButton.value?.removeAttribute("disabled")
+			emailAddressInput.value?.focus()
+		}
+	}
+)
+
+const isAccountFieldDisabled = computed(() => !form.bankName)
 
 const isPaymentDisabled = computed(() => {
-	return (
-		isAccountNumberFieldDisabled.value ||
-		!hasSlots.value ||
-		isMakingPayment.value
+	return [isAccountFieldDisabled, !hasSlots.value, isMakingPayment.value].some(
+		Boolean
 	)
 })
 const resetAllFormValues = () => {
-	bankName.value = ""
-	accountNumber.value = ""
-	emailAddress.value = ""
+	form.accountNumber = ""
+	form.bankName = ""
+	form.emailAddress = ""
 }
 const bannerText = computed(() => {
 	if (isPaymentSuccessful.value) {
 		return "Payment will be processed within 24hrs"
 	}
 	return "All slots for this month taken"
-})
-watch(accountNumber, async (newValue, oldValue) => {
-	accountInformationMessage.value = ""
-	if (newValue.length === 10) {
-		accountInformationMessage.value = `<span id="hourglass">⏳</span> Fetching Account Details`
-		const { account_name = "" } = await api.get("/validate_account_number", {
-			account_number: accountNumber.value,
-			bank_code: bankName.value,
-		})
-		if (!account_name) {
-			accountInformationMessage.value = `<span>❌</span> Account not found. Kindly check account number`
-			return
-		}
-		accountInformationMessage.value = `<span>✅</span> Account Name: ${account_name}`
-		payButton.value?.removeAttribute("disabled")
-		emailAddressInput.value?.focus()
-	}
-})
-
-onMounted(async () => {
-	const { remaining_slots, has_slots } = await api.get<{
-		remaining_slots: number
-		has_slots: boolean
-		amount_per_recipient: number
-	}>("/donation_info")
-	hasGottenInformation.value = true
-	remainingSlots.value = has_slots ? remaining_slots : 10
-	hasSlots.value = has_slots
 })
 
 const makePayment = async () => {
@@ -192,9 +172,9 @@ const makePayment = async () => {
 		},
 		{ status: number }
 	>("/pay", {
-		account_number: accountNumber.value,
-		bank_code: bankName.value,
-		email: emailAddress.value,
+		account_number: form.accountNumber,
+		bank_code: form.bankName,
+		email: form.emailAddress,
 	})
 
 	if (status === 200 || status == 419) {
