@@ -206,7 +206,7 @@ const makePayment = async () => {
 			resetAllFormValues()
 			buttonText.value = "Proceed"
 			isMakingPayment.value = false
-		}, 2_000)
+		}, 5_000)
 	} else {
 		buttonText.value = `<span>😔</span> Payment Failed. Try again`
 		setTimeout(() => {
