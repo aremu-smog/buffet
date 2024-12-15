@@ -84,22 +84,19 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
     no_of_recipients_db = current_donation.recipients.count
     is_limit_reached = no_of_recipients_db >= current_donation.no_of_recipients
 
-    puts "[limit-reached] #{limit_reached}"
+    puts "[limit-reached] #{is_limit_reached}"
     raise StandardError, '501 Limit reached for this month' if is_limit_reached
 
-    transfer = PaystackTransfers.new(paystack_object)
     amount_per_recipient = current_donation.amount
 
     puts "no_of_recipients_db: #{no_of_recipients_db}"
-    puts "recipient_code: #{recipient_code}"
+    puts "recipient_code: #{recipient_code} #{name}"
     puts "amount_per_recipient: #{amount_per_recipient}"
 
-    transfer.initializeTransfer(
-      source: 'balance',
-      reason: "Buffet for #{name}",
-      amount: amount_per_recipient,
-      recipient: recipient_code
-    )
+    intitialize_transfer(recipient: recipient_code, amount: amount_per_recipient.to_f)
+
+  rescue StandardError => e
+    puts "[make-transfer-error] #{e}"
   end
 
   def validate_params(expected_keys:, keys:)
@@ -119,6 +116,24 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
     raise ArgumentError, "400 Bad Request. Expects: #{expected_keys.join(', ')} in body" unless has_all_keys
   end
 
+  def intitialize_transfer(recipient:, amount:, reason: 'Buffet from Aremu')
+    paystack_url = URI("https://api.paystack.co/transfer")
+
+    http = Net::HTTP.new(paystack_url.host, paystack_url.port)
+    http.use_ssl = true
+
+    request = Net::HTTP::Post.new(paystack_url)
+    request['accept'] = 'application/json'
+    request['Authorization'] = "Bearer #{ENV.fetch('PAYSTACK_SECRET_KEY')}"
+
+    request.body = {source: 'balance', amount: amount, recipient: recipient, reason: reason}.to_json
+
+    response = http.request(request)
+    response_body = JSON.parse(response.read_body)
+
+    puts "[initialize-transfer-response-body]: #{response_body}"
+    response_body
+  end
   def get_account_name(account_number:, bank_code:)
     paystack_url = URI("https://api.paystack.co/bank/resolve?account_number=#{account_number}&bank_code=#{bank_code}")
 
@@ -148,9 +163,9 @@ class PaymentsController < ApplicationController # rubocop:disable Metrics/Class
   end
 
   def handle_transfer(transfer:, recipient:)
-    if transfer['status']
+    unless transfer.nil?
       transaction_history = TransactionHistory.create({ recipient_id: recipient.id, donation_id: current_donation.id })
-      return 'Transfer Successful' if transaction_history.save
+      return 'Transfer Successful' if transaction_history.save!
 
     end
 
