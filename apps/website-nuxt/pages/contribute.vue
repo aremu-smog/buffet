@@ -1,15 +1,5 @@
 <template>
 	<section data-visible="true" id="payment">
-		<dotlottie-player
-			id="confetti"
-			src="https://lottie.host/eb8f0bfa-19d6-4ff4-8df8-8b5105dedebe/HYkzZi9AGo.json"
-			background="transparent"
-			speed="1"
-			style="width: 100%; height: 100%"
-			loop
-			autoplay
-		></dotlottie-player>
-
 		<Header />
 		<section class="content-area">
 			<p>
